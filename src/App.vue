@@ -3,7 +3,8 @@ import Painel from './components/painel.vue';
 </script>
 
 <template>
-  <Painel></Painel>
+  <router-view />
+  
 </template>
 
 <style scoped>
