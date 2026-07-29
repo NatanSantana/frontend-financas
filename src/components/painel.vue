@@ -76,6 +76,19 @@
             </div>
         </div>
 
+        <div class="deletarCategoria">
+
+            <div id="formsDeletarCategoria">
+                <h1>Delete Uma Categoria</h1>
+                <select v-model="categoriaExcluir">
+                    <option  v-for="cat in categorias" :key="cat.idCategoria" :value="cat.idCategoria"> {{ cat.nome }}</option>
+                    
+                </select>
+                <button @click="excluirCategoria">Confirmar</button>
+            </div>
+            
+        </div>
+
         <div class="botoes" @click="logout">
             <button>SAIR</button>
         </div>
@@ -94,6 +107,68 @@
 </template>
 
 <style>
+
+.deletarCategoria {
+    display: flex;
+    position: absolute;
+    background-color: var(--bg-card-alt);
+    border: var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    color: var(--color-text);
+    padding: 0.80rem;
+    margin-top: 60vh;
+    margin-left: 37vh;
+}
+
+.deletarCategoria h1 {
+    font-weight: 700;
+    margin-left: 0.35rem;
+}
+
+#formsDeletarCategoria {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+#formsDeletarCategoria select {
+    height: 42px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: var(--bg-input);
+    color: var(--color-text);
+    padding: 0 12px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+    width: 100%;
+}
+
+#formsDeletarCategoria select:focus {
+    border-color: var(--color-highlight);
+}
+
+#formsDeletarCategoria button {
+    margin-top: 0.5rem;
+    height: 42px;
+    border: none;
+    border-radius: var(--radius-md);
+    background-color: var(--color-highlight);
+    color: #1a1a1a;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#formsDeletarCategoria button:hover {
+    background-color: var(--color-highlight-hover);
+}
+
+#formsDeletarCategoria button:active {
+    transform: scale(0.98);
+}
 
 #excluir {
     background: transparent;
@@ -484,6 +559,7 @@ h1 {
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router'
 
+const categoriaExcluir = ref()
 
 const route = useRoute()
 const idUser = route.params.id
@@ -506,6 +582,20 @@ const itensPorPagina = 5;
 function logout() {
     localStorage.removeItem("token")
     window.location.reload();
+}
+
+
+async function excluirCategoria() {
+    const request = await fetch(`http://localhost:3000/gastos/deletarCategoria?idUser=${idUser}&idCategoria=${categoriaExcluir.value}`, {
+        method: 'DELETE'
+    })
+    if (request.ok) {
+        console.log("Categoria Deletada")
+        window.location.reload();
+    } else {
+        console.log("Erro ao deletar Categoria")
+    }
+    
 }
 
 async function excluir(idGastos) {
@@ -606,6 +696,12 @@ onMounted(async () => {
     const data = await response.json();
     if (response.ok) {
         gastosFixos.value = data;
+        for (let i of data) {
+            valor.value += Number(i.valor)
+            console.log(i.valor)
+        }
+
+
     } else {
         console.log(data)
     }
