@@ -28,7 +28,7 @@
             </form>
 
             <p class="link-cadastro">
-                Já tem conta? <a href="/">Entrar</a>
+                Já tem conta? <a href="https://frontend-financas-zg6m-1v39q6py3-natansantanas-projects.vercel.app/">Entrar</a>
             </p>
         </div>
     </div>
@@ -183,7 +183,7 @@ async function registrar() {
     })
 
     if(request.ok) {
-        router.push('/')
+        router.push('https://frontend-financas-zg6m-1v39q6py3-natansantanas-projects.vercel.app/')
     }
 }
 
