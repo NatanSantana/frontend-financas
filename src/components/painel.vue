@@ -101,8 +101,8 @@
 
         </div>
 
-        <div class="botoes" @click="logout">
-            <button>SAIR</button>
+        <div class="botoes" >
+            <button @click="logout">SAIR</button>
         </div>
 
         <div class="gastosFixos">
