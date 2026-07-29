@@ -15,7 +15,7 @@
                     <input v-model="descricao" type="text" placeholder="Descrição" id="inputDescricao">
                     <input v-model="valorCompra" type="number" placeholder="Valor" id="inputValor">
                     <select id="selectCategoria" v-model="categoriaSelecionada">
-                        <option disabled value="">Categoria</option>
+                        <option>-</option>
                         <option v-for="cat in categorias" :key="cat.idCategoria" :value="cat.idCategoria">
                             {{ cat.nome }}
                         </option>
@@ -89,6 +89,18 @@
             
         </div>
 
+        <div class="adicionarGastoFixo">
+            
+            <div id="formsCompra">
+                <h1>Adicionar Gasto Fixo</h1>
+                    <input v-model="descricaoGastoFixo" type="text" placeholder="Descrição" id="inputDescricaoGastoFixo">
+                    <input v-model="valorGastoFixo" type="number" placeholder="Valor" id="inputValorGastoFixo">
+            
+                    <button @click="registrarGastoFixo" id="buttonGastoFixo">Confirmar</button>
+                </div>
+
+        </div>
+
         <div class="botoes" @click="logout">
             <button>SAIR</button>
         </div>
@@ -107,76 +119,6 @@
 </template>
 
 <style>
-
-.deletarCategoria {
-    display: flex;
-    position: absolute;
-    background-color: var(--bg-card-alt);
-    border: var(--border-subtle);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-card);
-    color: var(--color-text);
-    padding: 0.80rem;
-    margin-top: 60vh;
-    margin-left: 37vh;
-}
-
-.deletarCategoria h1 {
-    font-weight: 700;
-    margin-left: 0.35rem;
-}
-
-#formsDeletarCategoria {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
-#formsDeletarCategoria select {
-    height: 42px;
-    border-radius: var(--radius-md);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    background-color: var(--bg-input);
-    color: var(--color-text);
-    padding: 0 12px;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s ease;
-    width: 100%;
-}
-
-#formsDeletarCategoria select:focus {
-    border-color: var(--color-highlight);
-}
-
-#formsDeletarCategoria button {
-    margin-top: 0.5rem;
-    height: 42px;
-    border: none;
-    border-radius: var(--radius-md);
-    background-color: var(--color-highlight);
-    color: #1a1a1a;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-}
-
-#formsDeletarCategoria button:hover {
-    background-color: var(--color-highlight-hover);
-}
-
-#formsDeletarCategoria button:active {
-    transform: scale(0.98);
-}
-
-#excluir {
-    background: transparent;
-    border: none;
-    color: rgb(235, 2, 2);
-    cursor: pointer;
-    font-weight: 700;
-}
 
 :root {
     --bg-card: #2a0a12;
@@ -212,28 +154,30 @@ h1 {
     letter-spacing: 0.3px;
 }
 
-/* ===== LAYOUT GERAL ===== */
+
 .dashboard {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(260px, 320px) 1fr 1fr;
     gap: 2rem;
-    align-items: flex-start;
+    align-items: start;
     max-width: 1500px;
     margin: 0 auto;
-    flex-wrap: wrap;
 }
 
 .painel-lateral {
+    grid-column: 1;
+    grid-row: 1 / span 3;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    flex: 1 1 320px;
-    max-width: 320px;
 }
 
-/* Cards base */
+
 #container-mensal,
 .addCompra,
-#compras {
+#compras,
+.deletarCategoria,
+.adicionarGastoFixo {
     background-color: var(--bg-card);
     border: var(--border-subtle);
     border-radius: var(--radius-lg);
@@ -242,7 +186,7 @@ h1 {
     padding: 1.5rem;
 }
 
-/* ===== GASTO MENSAL ===== */
+
 #container-mensal h2 {
     font-size: 1.5rem;
     font-weight: 700;
@@ -257,7 +201,7 @@ h1 {
     margin: 0;
 }
 
-/* ===== FORMULÁRIOS ===== */
+
 #formsCompra {
     display: flex;
     flex-direction: column;
@@ -308,7 +252,7 @@ h1 {
     transform: scale(0.98);
 }
 
-/* ===== CRIAR CATEGORIA ===== */
+
 .criarCategorias {
     background-color: var(--bg-card-alt);
     border: var(--border-subtle);
@@ -316,7 +260,7 @@ h1 {
     box-shadow: var(--shadow-card);
     color: var(--color-text);
     padding: 1.5rem;
-    margin-top: 3vh;
+    margin-top: 1.5rem;
 }
 
 .criarCategorias h1 {
@@ -328,9 +272,10 @@ h1 {
     width: 100%;
 }
 
-/* ===== LISTA DE COMPRAS ===== */
+
 #compras {
-    flex: 3 1 400px;
+    grid-column: 2 / span 2;
+    grid-row: 1;
     min-width: 0;
 }
 
@@ -340,7 +285,6 @@ h1 {
     gap: 0.75rem;
     margin-bottom: 1rem;
     flex-wrap: wrap;
-    margin-left: 2vh;
 }
 
 #mesAno {
@@ -425,7 +369,7 @@ h1 {
     cursor: not-allowed;
 }
 
-/* ===== RENDA / SALDO ===== */
+
 .dinheiro {
     display: flex;
     flex-wrap: wrap;
@@ -454,7 +398,101 @@ h1 {
     margin: 0;
 }
 
-/* ===== BOTÃO SAIR ===== */
+
+.deletarCategoria {
+    grid-column: 2;
+    grid-row: 2;
+}
+
+.deletarCategoria h1 {
+    font-weight: 700;
+}
+
+#formsDeletarCategoria {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+#formsDeletarCategoria select {
+    height: 42px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: var(--bg-input);
+    color: var(--color-text);
+    padding: 0 12px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+    width: 100%;
+}
+
+#formsDeletarCategoria select:focus {
+    border-color: var(--color-highlight);
+}
+
+#formsDeletarCategoria button {
+    margin-top: 0.5rem;
+    height: 42px;
+    border: none;
+    border-radius: var(--radius-md);
+    background-color: var(--color-highlight);
+    color: #1a1a1a;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+#formsDeletarCategoria button:hover {
+    background-color: var(--color-highlight-hover);
+}
+
+#formsDeletarCategoria button:active {
+    transform: scale(0.98);
+}
+
+#excluir {
+    background: transparent;
+    border: none;
+    color: rgb(235, 2, 2);
+    cursor: pointer;
+    font-weight: 700;
+}
+
+
+.adicionarGastoFixo {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+.adicionarGastoFixo h1 {
+    font-weight: 700;
+}
+
+.adicionarGastoFixo #buttonGastoFixo {
+    background-color: var(--color-highlight);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    color: #000000;
+    font-weight: 700;
+    font-size: 15px;
+    height: 42px;
+    
+}
+.adicionarGastoFixo #buttonGastoFixo:hover {
+    background-color: var(--color-highlight-hover);
+    cursor: pointer;
+}
+
+.dashboard .botoes {
+    grid-column: 2 / span 2;
+    grid-row: 3;
+    display: flex;
+    justify-content: flex-end;
+}
+
 .dashboard .botoes button {
     background-color: var(--bg-card);
     border: var(--border-subtle);
@@ -471,18 +509,18 @@ h1 {
     background-color: #3a0d16;
 }
 
-/* ===== GASTOS FIXOS ===== */
+
 .gastosFixos {
+    grid-column: 1 / -1;
+    grid-row: 4;
     display: flex;
     flex-direction: column;
     background-color: var(--bg-card-alt);
     box-shadow: var(--shadow-card);
     border: var(--border-subtle);
     border-radius: var(--radius-lg);
-    width: 100%;
-    max-width: 1500px;
     min-height: 200px;
-    margin: 2rem auto 0;
+    margin-top: 0.5rem;
     padding: 1.5rem;
 }
 
@@ -506,23 +544,66 @@ h1 {
     border-bottom: none;
 }
 
-/* ===== MOBILE ===== */
+
+@media (max-width: 1024px) {
+    body {
+        padding: 1.5rem;
+    }
+
+    .dashboard {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .painel-lateral {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    #compras {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    .deletarCategoria {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .adicionarGastoFixo {
+        grid-column: 2;
+        grid-row: 3;
+    }
+
+    .dashboard .botoes {
+        grid-column: 1 / -1;
+        grid-row: 4;
+    }
+
+    .gastosFixos {
+        grid-column: 1 / -1;
+        grid-row: 5;
+    }
+}
+
+
 @media (max-width: 768px) {
     body {
         padding: 1rem;
     }
 
     .dashboard {
+        grid-template-columns: 1fr;
         gap: 1rem;
     }
 
-    .painel-lateral {
-        flex: 1 1 100%;
-        max-width: 100%;
-    }
-
-    #compras {
-        flex: 1 1 100%;
+    .painel-lateral,
+    #compras,
+    .deletarCategoria,
+    .adicionarGastoFixo,
+    .dashboard .botoes,
+    .gastosFixos {
+        grid-column: 1;
+        grid-row: auto;
     }
 
     .filtroMes {
@@ -548,9 +629,22 @@ h1 {
     }
 
     .dashboard .botoes {
-        width: 100%;
-        display: flex;
         justify-content: center;
+    }
+
+    .gastos p {
+        flex-direction: column;
+        gap: 0.35rem;
+    }
+}
+
+@media (max-width: 400px) {
+    h1 {
+        font-size: 1.2rem;
+    }
+
+    #container-mensal h2 {
+        font-size: 1.25rem;
     }
 }
 </style>
@@ -559,6 +653,9 @@ h1 {
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router'
 
+
+const descricaoGastoFixo = ref()
+const valorGastoFixo = ref()
 const categoriaExcluir = ref()
 
 const route = useRoute()
@@ -584,6 +681,27 @@ function logout() {
     window.location.reload();
 }
 
+async function registrarGastoFixo() {
+    const request = await fetch(`http://localhost:3000/gastos/fixo`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            valor: Number(valorGastoFixo.value),
+            descricao: descricaoGastoFixo.value,
+            idUser: Number(idUser)
+        })
+    })
+    const data = await request.json();
+
+    if(request.ok) {
+        window.location.reload()
+        
+    } else {
+        console.log(data)
+    }
+}
 
 async function excluirCategoria() {
     const request = await fetch(`http://localhost:3000/gastos/deletarCategoria?idUser=${idUser}&idCategoria=${categoriaExcluir.value}`, {
