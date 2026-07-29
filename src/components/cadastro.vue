@@ -1,25 +1,34 @@
 <template>
     <div class="login-wrapper">
         <div class="login-card">
-            <h1>Entrar</h1>
-            <p class="subtitulo">Acesse sua conta pra continuar</p>
+            <h1>Cadastre-se</h1>
+            <p class="subtitulo">Crie sua conta pra continuar</p>
 
-            <form id="formLogin" @submit.prevent="fazerLogin">
+            <form id="formLogin" @submit.prevent="fazerCadastro">
+                <label for="inputNome">Nome</label>
+                <input v-model="nome" type="text" placeholder="Nome" id="inputEmail">
+
                 <label for="inputEmail">E-mail</label>
                 <input v-model="email" type="email" placeholder="seu@email.com" id="inputEmail">
 
                 <label for="inputSenha">Senha</label>
                 <input v-model="senha" type="password" placeholder="••••••••" id="inputSenha">
 
+                <label for="inputTelefone">Telefone</label>
+                <input v-model="telefone" type="tel" placeholder="(71) 91234-5678" id="inputTelefone">
+
+                <label for="inputRenda">Renda mensal</label>
+                <input v-model="rendaMensal" type="text" placeholder="R$ 0,00" id="inputRenda">
+
                 <p class="erro" v-if="mensagemErro">{{ mensagemErro }}</p>
 
-                <button type="submit" :disabled="carregando" @click="login(email, senha)">
-                    {{ carregando ? 'Entrando...' : 'Entrar' }}
+                <button type="submit" @click="registrar">
+                    {{ carregando ? 'Cadastrando...' : 'Cadastrar' }}
                 </button>
             </form>
 
             <p class="link-cadastro">
-                Não tem conta? <a href="/cadastro">Cadastre-se</a>
+                Já tem conta? <a href="/">Entrar</a>
             </p>
         </div>
     </div>
@@ -147,38 +156,35 @@
 </style>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import { jwtDecode } from 'jwt-decode'
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
 
-const router = useRouter()
+const router = useRouter();
 
-async function login(email, senha) {
-    console.log(email, senha)
-    const request = await fetch("http://localhost:3000/user/login", {
+const nome = ref();
+const email = ref();
+const telefone = ref();
+const senha = ref();
+const rendaMensal = ref();
+
+async function registrar() {
+    const request = await fetch("http://localhost:3000/user/registrar", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            email: email,
-            senha: senha
-
+            nome: nome.value,
+            email: email.value,
+            telefone: telefone.value,
+            senha: senha.value,
+            rendaMensal: Number(rendaMensal.value)
         })
-    });
-    
-
+    })
 
     if(request.ok) {
-        const token = await request.json();
-        const decoded = jwtDecode(token.token);
-        localStorage.setItem('token', token.token)
-        router.push(`/painel/${decoded.sub}`)
-
-    } else {
-        console.log("error")
+        router.push('/')
     }
-    
 }
-
 
 </script>

@@ -4,6 +4,9 @@
             <div id="container-mensal">
                 <h1>Gasto Mensal</h1>
                 <h2>R$ {{ valor }}</h2>
+                <h1>Gasto Por Categoria:</h1>
+                
+                <p v-for="cg in gastoPorCategoria" :key="cg.categoria"> <span style="color: whitesmoke; font-weight: bold;" >{{ cg.categoria }}</span> - R${{ cg.total }}</p>
             </div>
 
             <div class="addCompra">
@@ -19,7 +22,19 @@
                     </select>
                     <button @click="registraCompra">Confirmar</button>
                 </div>
+
+            <div class="criarCategorias">
+                <h1>Crie uma Categoria</h1>
+                <div id="formsCompra">
+                    <input v-model="categoriaCriada" placeholder="Nome">
+                    <button @click="criarCategoria">Confirmar</button>
+
+                </div>
             </div>
+
+            </div>
+
+
         </div>
 
         <div id="compras">
@@ -34,12 +49,28 @@
                 <span>Página {{ paginaAtual }} de {{ totalPaginas }}</span>
                 <button @click="proximaPagina" :disabled="paginaAtual === totalPaginas">Próxima</button>
             </div>
+
+            
+
         </div>
+
+        <div class="botoes" @click="logout">
+            <button>SAIR</button>
+        </div>
+
+
     </div>
+
+
 </template>
 
 
 <style> 
+
+
+    
+
+
 *{
     box-sizing: border-box;
 }
@@ -51,6 +82,38 @@ body {
     padding: 2rem;
     font-family: 'Segoe UI', system-ui, sans-serif;
 }
+
+.criarCategorias {
+    background-color: #460414;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    color: whitesmoke;
+    height: 25vh;   
+    margin-top: 20px;
+}
+
+.criarCategorias h1 {
+    padding-left: 1.7rem;
+    font-weight: 700;
+    margin-top: 3vh;
+}
+
+.criarCategorias #formsCompra {
+    width: 20vh;
+    margin-left: 3.6vh;
+}
+
+.dashboard .botoes button{
+    background-color: #2a0a12;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    color: whitesmoke;
+    font-weight: 700;
+    height: 3vh;
+    width: 7vh;
+    }
 
 .dashboard {
     display: flex;
@@ -89,10 +152,18 @@ h1 {
 
 /* Gasto mensal */
 #container-mensal h2 {
-    font-size: 2.2rem;
+    font-size: 1.5rem;
     font-weight: 700;
     margin: 0;
     color: #ff6b81;
+    margin-top: -1rem;
+}
+
+#container-mensal p {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ff6b81;
+    margin-top: -0.5rem;
 }
 
 /* Formulário de compras */
@@ -208,12 +279,17 @@ h1 {
 </style>
 
 <script setup>
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router'
+import { jwtDecode } from 'jwt-decode';
+
 
 const route = useRoute()
 const idUser = route.params.id
+const decoded = ref(jwtDecode(localStorage.getItem("token")));
 
+const gastoPorCategoria = ref([])
+const categoriaCriada = ref()
 const categoriaSelecionada = ref()
 const categorias = ref([])
 const valorCompra = ref()
@@ -223,6 +299,32 @@ const compras = ref([])
 
 const paginaAtual = ref(1);
 const itensPorPagina = 5;
+
+function logout() {
+    localStorage.removeItem("token")
+    window.location.reload();
+}
+
+
+async function criarCategoria() {
+    const request = await fetch("http://localhost:3000/gastos/categoria", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            nome: categoriaCriada.value,
+            idUser: Number(idUser)
+        })
+    });
+    if (request.ok) {
+        window.location.reload();
+    } else {
+        console.log("erro ao criar");
+        console.log(await request.json())
+    }
+
+}
 
 const totalPaginas = computed(() => {
     return Math.ceil(compras.value.length / itensPorPagina) || 1;
@@ -257,9 +359,9 @@ async function registraCompra() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            valor: valorCompra.value,
+            valor: Number(valorCompra.value),
             descricao: descricao.value,
-            idUser: 2,
+            idUser: Number(idUser),
             idCategoria: categoriaSelecionada.value
         })
     })
@@ -281,8 +383,10 @@ onMounted(async () => {
     const response = await fetch(`http://localhost:3000/relatorio/mensal?idUser=${idUser}`)
     if(response.ok) {
         const json = await response.json();
-        console.log(json)
+        
+        gastoPorCategoria.value = json;
         for(let i of json) {
+            i.total = Number(i.total)
             valor.value += i.total
         }
 
