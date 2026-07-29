@@ -21,11 +21,18 @@
             <p class="link-cadastro">
                 Não tem conta? <a href="/cadastro">Cadastre-se</a>
             </p>
+            <p v-if="clicado" id="aguarde">AGUARDE...</p>
+
         </div>
     </div>
 </template>
 
 <style>
+
+#aguarde {
+    margin-left: 12vh;
+}
+
 .login-wrapper {
     display: flex;
     justify-content: center;
@@ -149,12 +156,15 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { jwtDecode } from 'jwt-decode'
+import { ref } from 'vue'
 
 const router = useRouter()
 
+const clicado = ref(false)
+
 async function login(email, senha) {
-    console.log(email, senha)
-    const request = await fetch("http://localhost:3000/user/login", {
+    clicado.value = true
+    const request = await fetch("https://controle-financeiro-9hd1.onrender.com/user/login", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

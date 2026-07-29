@@ -101,8 +101,8 @@
 
         </div>
 
-        <div class="botoes" @click="logout">
-            <button>SAIR</button>
+        <div class="botoes" >
+            <button @click="logout">SAIR</button>
         </div>
 
         <div class="gastosFixos">
@@ -682,6 +682,8 @@ function logout() {
 }
 
 async function registrarGastoFixo() {
+    
+
     const request = await fetch(`http://localhost:3000/gastos/fixo`, {
         method: 'POST',
         headers: {
@@ -704,6 +706,7 @@ async function registrarGastoFixo() {
 }
 
 async function excluirCategoria() {
+    
     const request = await fetch(`http://localhost:3000/gastos/deletarCategoria?idUser=${idUser}&idCategoria=${categoriaExcluir.value}`, {
         method: 'DELETE'
     })
@@ -717,6 +720,7 @@ async function excluirCategoria() {
 }
 
 async function excluir(idGastos) {
+    
     const request = await fetch(`http://localhost:3000/gastos/deletarGasto?idUser=${idUser}&idGastos=${idGastos}`, {
         method: 'DELETE'
     })
@@ -726,6 +730,10 @@ async function excluir(idGastos) {
 }
 
 async function mesSelecionado() {
+    if (!mesFiltro.value) {
+        alert("Preencha todas as informações para filtrar")
+        return
+    }
     const request = await fetch(`http://localhost:3000/gastos/listar-gastosMes?idUser=${idUser}&mes=${mesFiltro.value}`)
     const data = await request.json();
     if (request.ok) {
@@ -734,6 +742,7 @@ async function mesSelecionado() {
 
 }
 async function criarCategoria() {
+    
     const request = await fetch("http://localhost:3000/gastos/categoria", {
         method: 'POST',
         headers: {
@@ -780,7 +789,8 @@ function formatarData(dataISO) {
 }
 
 async function registraCompra() {
-    const request = await fetch("http://localhost:3000/gastos", {
+    
+    const request = await fetch("https://controle-financeiro-9hd1.onrender.com/gastos", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -799,7 +809,7 @@ async function registraCompra() {
 }
 
 onMounted(async () => {
-    const response = await fetch(`http://localhost:3000/user/rendaMensal?idUser=${idUser}`)
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/user/rendaMensal?idUser=${idUser}`)
     const data = await response.json();
     if (response.ok) {
         rendaMensal.value = data.rendaMensal;
@@ -810,7 +820,7 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`http://localhost:3000/gastos/listar-gastosFixos?idUser=${idUser}`);
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosFixos?idUser=${idUser}`);
     const data = await response.json();
     if (response.ok) {
         gastosFixos.value = data;
@@ -828,7 +838,7 @@ onMounted(async () => {
 })  
 
 onMounted(async () => {
-    const response = await fetch(`http://localhost:3000/gastos/listar-categorias?idUser=${idUser}`)
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-categorias?idUser=${idUser}`)
     if (response.ok) {
         const json = await response.json();
         categorias.value = json;
@@ -836,7 +846,7 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`http://localhost:3000/relatorio/mensal?idUser=${idUser}`)
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/relatorio/mensal?idUser=${idUser}`)
     if(response.ok) {
         const json = await response.json();
         
@@ -852,7 +862,7 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`http://localhost:3000/gastos?idUser=${idUser}`);
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos?idUser=${idUser}`);
     if (response.ok) {
         const json = await response.json()
         console.log(json)
