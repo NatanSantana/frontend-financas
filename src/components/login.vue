@@ -19,7 +19,7 @@
             </form>
 
             <p class="link-cadastro">
-                Não tem conta? <a href="https://frontend-financas-zg6m-1v39q6py3-natansantanas-projects.vercel.app//cadastro">Cadastre-se</a>
+                Não tem conta? <a href="/cadastro">Cadastre-se</a>
             </p>
         </div>
     </div>

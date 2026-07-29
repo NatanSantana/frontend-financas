@@ -43,27 +43,33 @@ function sessaoExpirada() {
 
 router.beforeEach((to, from, next) => {
     const token = localStorage.getItem("token")
-    
-    if (to.meta.requiresAuth) {
-        if (!token) {
-            return next('/')
-        }
-        
-        try {
-            const decoded = jwtDecode(token)
-            if (Number(to.params.id) !== Number(decoded.sub)) {
-                localStorage.removeItem("token")
-                return next('/')
-            }
-        } catch {
-            return next('/')
-        }
+
+    if (!to.meta.requiresAuth) {
+        return next()
     }
-    if (to.name === 'painel' && sessaoExpirada()) {
+
+    if (!token) {
+        return next('/')
+    }
+
+    try {
+        const decoded = jwtDecode(token)
+        const agora = Math.floor(Date.now() / 1000)
+
+        if (!decoded.exp || decoded.exp < agora) {
+            localStorage.removeItem('token')
+            return next('/')
+        }
+
+        if (Number(to.params.id) !== Number(decoded.sub)) {
+            localStorage.removeItem('token')
+            return next('/')
+        }
+
+        return next()
+    } catch {
         localStorage.removeItem('token')
-        next({ name: 'login' })
-    } else {
-        next()
+        return next('/')
     }
 })
 
