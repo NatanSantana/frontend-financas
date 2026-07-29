@@ -168,7 +168,7 @@ const senha = ref();
 const rendaMensal = ref();
 
 async function registrar() {
-    const request = await fetch("http://localhost:3000/user/registrar", {
+    const request = await fetch("https://controle-financeiro-9hd1.onrender.com/user/registrar", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

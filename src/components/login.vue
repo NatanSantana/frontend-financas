@@ -154,7 +154,7 @@ const router = useRouter()
 
 async function login(email, senha) {
     console.log(email, senha)
-    const request = await fetch("http://localhost:3000/user/login", {
+    const request = await fetch("https://controle-financeiro-9hd1.onrender.com/user/login", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

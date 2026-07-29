@@ -805,7 +805,7 @@ async function registraCompra() {
         alert("Preencha todas as informações para registrar compra")
         return
     }
-    const request = await fetch("http://localhost:3000/gastos", {
+    const request = await fetch("https://controle-financeiro-9hd1.onrender.com/gastos", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -824,7 +824,7 @@ async function registraCompra() {
 }
 
 onMounted(async () => {
-    const response = await fetch(`http://localhost:3000/user/rendaMensal?idUser=${idUser}`)
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/user/rendaMensal?idUser=${idUser}`)
     const data = await response.json();
     if (response.ok) {
         rendaMensal.value = data.rendaMensal;
@@ -835,7 +835,7 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`http://localhost:3000/gastos/listar-gastosFixos?idUser=${idUser}`);
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosFixos?idUser=${idUser}`);
     const data = await response.json();
     if (response.ok) {
         gastosFixos.value = data;
@@ -853,7 +853,7 @@ onMounted(async () => {
 })  
 
 onMounted(async () => {
-    const response = await fetch(`http://localhost:3000/gastos/listar-categorias?idUser=${idUser}`)
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-categorias?idUser=${idUser}`)
     if (response.ok) {
         const json = await response.json();
         categorias.value = json;
@@ -861,7 +861,7 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`http://localhost:3000/relatorio/mensal?idUser=${idUser}`)
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/relatorio/mensal?idUser=${idUser}`)
     if(response.ok) {
         const json = await response.json();
         
@@ -877,7 +877,7 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`http://localhost:3000/gastos?idUser=${idUser}`);
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos?idUser=${idUser}`);
     if (response.ok) {
         const json = await response.json()
         console.log(json)
