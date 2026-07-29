@@ -682,6 +682,11 @@ function logout() {
 }
 
 async function registrarGastoFixo() {
+    if (!valorGastoFixo.value || !descricaoGastoFixo.value) {
+        alert("Preencha todas as informações para registrar o gasto fixo")
+        return
+    }
+
     const request = await fetch(`http://localhost:3000/gastos/fixo`, {
         method: 'POST',
         headers: {
@@ -704,6 +709,10 @@ async function registrarGastoFixo() {
 }
 
 async function excluirCategoria() {
+    if (!categoriaExcluir.value) {
+        alert("Preencha todas as informações para excluir categoria")
+        return
+    }
     const request = await fetch(`http://localhost:3000/gastos/deletarCategoria?idUser=${idUser}&idCategoria=${categoriaExcluir.value}`, {
         method: 'DELETE'
     })
@@ -717,6 +726,10 @@ async function excluirCategoria() {
 }
 
 async function excluir(idGastos) {
+    if (!idGastos) {
+        alert("Preencha todas as informações excluir um gasto")
+        return
+    }
     const request = await fetch(`http://localhost:3000/gastos/deletarGasto?idUser=${idUser}&idGastos=${idGastos}`, {
         method: 'DELETE'
     })
@@ -726,6 +739,10 @@ async function excluir(idGastos) {
 }
 
 async function mesSelecionado() {
+    if (!mesFiltro.value) {
+        alert("Preencha todas as informações para filtrar")
+        return
+    }
     const request = await fetch(`http://localhost:3000/gastos/listar-gastosMes?idUser=${idUser}&mes=${mesFiltro.value}`)
     const data = await request.json();
     if (request.ok) {
@@ -734,6 +751,10 @@ async function mesSelecionado() {
 
 }
 async function criarCategoria() {
+    if (!categoriaCriada.value) {
+        alert("Preencha todas as informações para criar categoria")
+        return
+    }
     const request = await fetch("http://localhost:3000/gastos/categoria", {
         method: 'POST',
         headers: {
@@ -780,6 +801,10 @@ function formatarData(dataISO) {
 }
 
 async function registraCompra() {
+    if (!valorCompra.value || !descricao.value || categoriaSelecionada.value) {
+        alert("Preencha todas as informações para registrar compra")
+        return
+    }
     const request = await fetch("http://localhost:3000/gastos", {
         method: 'POST',
         headers: {
