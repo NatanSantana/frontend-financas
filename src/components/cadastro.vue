@@ -29,7 +29,9 @@
 
             <p class="link-cadastro">
                 Já tem conta? <a href="/">Entrar</a>
+                <p v-if="clicado">AGUARDE...</p>
             </p>
+            
         </div>
     </div>
 </template>
@@ -160,7 +162,7 @@ import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 
 const router = useRouter();
-
+const clicado = ref(false)
 const nome = ref();
 const email = ref();
 const telefone = ref();
@@ -168,6 +170,7 @@ const senha = ref();
 const rendaMensal = ref();
 
 async function registrar() {
+    clicado.value = true
     const request = await fetch("https://controle-financeiro-9hd1.onrender.com/user/registrar", {
         method: 'POST',
         headers: {
