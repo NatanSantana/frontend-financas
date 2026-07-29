@@ -39,9 +39,13 @@
 
         <div id="compras">
             <h1>Compras</h1>
+            <div class="filtroMes">
+                <input v-model="mesFiltro" type="month" id="mesAno">
+                <button @click="mesSelecionado" id="buttonMes">Filtrar</button>
+            </div>
 
             <div class="gastos" v-for="c in comprasPaginadas" :key="c.idGastos">
-                <p>R$ {{ c.valor }} — {{ c.descricao }} <span class="data">{{ formatarData(c.dataCompra) }}</span></p>
+                <p>R$ {{ c.valor }} — {{ c.descricao }} <span class="data">{{ formatarData(c.dataCompra) }}  <button @click="excluir(c.idGastos)" id="excluir">X</button></span>  </p>
             </div>
 
             <div class="paginacao">
@@ -50,12 +54,37 @@
                 <button @click="proximaPagina" :disabled="paginaAtual === totalPaginas">Próxima</button>
             </div>
 
-            
+            <div class="dinheiro">
 
+            
+                <div class="renda">
+                    <div id="rendaMensal">
+                        <h1>Renda Mensal</h1>
+                     <p>R$ {{ rendaMensal }}</p>
+                    </div>
+
+                </div>
+
+                <div class="renda">
+                    <div id="rendaMensal"> 
+                        <h1>Saldo</h1>
+                        <p> R$ {{ rendaMensal - valor }}</p>
+                    </div>
+                
+
+                </div>
+            </div>
         </div>
 
         <div class="botoes" @click="logout">
             <button>SAIR</button>
+        </div>
+
+        <div class="gastosFixos">
+            <h1>Gastos Fixos</h1>
+            <p class="pGastosFixos" v-for="gf in gastosFixos" :key="gf.id">
+                R$ {{ gf.valor }} — {{ gf.descricao }}
+                </p>
         </div>
 
 
@@ -64,14 +93,32 @@
 
 </template>
 
+<style>
 
-<style> 
+#excluir {
+    background: transparent;
+    border: none;
+    color: rgb(235, 2, 2);
+    cursor: pointer;
+    font-weight: 700;
+}
 
+:root {
+    --bg-card: #2a0a12;
+    --bg-card-alt: #460414;
+    --bg-input: #3a0d16;
+    --bg-accent: #490113;
+    --color-text: whitesmoke;
+    --color-highlight: #ff6b81;
+    --color-highlight-hover: #ff8595;
+    --border-subtle: 1px solid rgba(255, 255, 255, 0.08);
+    --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.45);
+    --radius-lg: 14px;
+    --radius-md: 8px;
+    --radius-sm: 6px;
+}
 
-    
-
-
-*{
+* {
     box-sizing: border-box;
 }
 
@@ -83,43 +130,19 @@ body {
     font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
-.criarCategorias {
-    background-color: #460414;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 14px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-    color: whitesmoke;
-    height: 25vh;   
-    margin-top: 20px;
+h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    letter-spacing: 0.3px;
 }
 
-.criarCategorias h1 {
-    padding-left: 1.7rem;
-    font-weight: 700;
-    margin-top: 3vh;
-}
-
-.criarCategorias #formsCompra {
-    width: 20vh;
-    margin-left: 3.6vh;
-}
-
-.dashboard .botoes button{
-    background-color: #2a0a12;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 5px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-    color: whitesmoke;
-    font-weight: 700;
-    height: 3vh;
-    width: 7vh;
-    }
-
+/* ===== LAYOUT GERAL ===== */
 .dashboard {
     display: flex;
     gap: 2rem;
     align-items: flex-start;
-    max-width: 1100px;
+    max-width: 1500px;
     margin: 0 auto;
     flex-wrap: wrap;
 }
@@ -128,45 +151,38 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    width: 320px;
+    flex: 1 1 320px;
+    max-width: 320px;
 }
 
 /* Cards base */
 #container-mensal,
 .addCompra,
 #compras {
-    background-color: #2a0a12;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 14px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-    color: whitesmoke;
+    background-color: var(--bg-card);
+    border: var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    color: var(--color-text);
     padding: 1.5rem;
 }
 
-h1 {
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin: 0 0 1rem 0;
-    letter-spacing: 0.3px;
-}
-
-/* Gasto mensal */
+/* ===== GASTO MENSAL ===== */
 #container-mensal h2 {
     font-size: 1.5rem;
     font-weight: 700;
-    margin: 0;
-    color: #ff6b81;
-    margin-top: -1rem;
+    color: var(--color-highlight);
+    margin: -0.5rem 0 1rem 0;
 }
 
 #container-mensal p {
     font-size: 1rem;
     font-weight: 700;
-    color: #ff6b81;
-    margin-top: -0.5rem;
+    color: var(--color-highlight);
+    margin: 0;
 }
 
-/* Formulário de compras */
+/* ===== FORMULÁRIOS ===== */
 #formsCompra {
     display: flex;
     flex-direction: column;
@@ -176,10 +192,10 @@ h1 {
 #formsCompra input,
 #formsCompra select {
     height: 42px;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    background-color: #3a0d16;
-    color: whitesmoke;
+    background-color: var(--bg-input);
+    color: var(--color-text);
     padding: 0 12px;
     font-size: 0.95rem;
     outline: none;
@@ -193,15 +209,15 @@ h1 {
 
 #formsCompra input:focus,
 #formsCompra select:focus {
-    border-color: #ff6b81;
+    border-color: var(--color-highlight);
 }
 
 .addCompra button {
     margin-top: 0.5rem;
     height: 42px;
     border: none;
-    border-radius: 8px;
-    background-color: #ff6b81;
+    border-radius: var(--radius-md);
+    background-color: var(--color-highlight);
     color: #1a1a1a;
     font-weight: 600;
     font-size: 0.95rem;
@@ -210,22 +226,79 @@ h1 {
 }
 
 .addCompra button:hover {
-    background-color: #ff8595;
+    background-color: var(--color-highlight-hover);
 }
 
 .addCompra button:active {
     transform: scale(0.98);
 }
 
-/* Lista de compras */
+/* ===== CRIAR CATEGORIA ===== */
+.criarCategorias {
+    background-color: var(--bg-card-alt);
+    border: var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    color: var(--color-text);
+    padding: 1.5rem;
+    margin-top: 3vh;
+}
+
+.criarCategorias h1 {
+    font-weight: 700;
+    margin-left: 0.44rem;
+}
+
+.criarCategorias #formsCompra {
+    width: 100%;
+}
+
+/* ===== LISTA DE COMPRAS ===== */
 #compras {
-    flex: 1;
-    min-width: 320px;
+    flex: 3 1 400px;
+    min-width: 0;
+}
+
+.filtroMes {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    margin-left: 2vh;
+}
+
+#mesAno {
+    background-color: var(--bg-accent);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--color-text);
+    height: 42px;
+    padding: 0 12px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+}
+
+#buttonMes {
+    background-color: var(--bg-accent);
+    height: 42px;
+    padding: 0 1.2rem;
+    color: var(--color-text);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: var(--shadow-card);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+#buttonMes:hover {
+    background-color: var(--color-highlight);
+    color: #1a1a1a;
 }
 
 .gastos {
     padding: 0.75rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: var(--border-subtle);
 }
 
 .gastos:last-of-type {
@@ -238,6 +311,7 @@ h1 {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .gastos .data {
@@ -251,22 +325,23 @@ h1 {
     align-items: center;
     gap: 12px;
     margin-top: 1.25rem;
-    color: whitesmoke;
+    color: var(--color-text);
     font-size: 0.9rem;
+    flex-wrap: wrap;
 }
 
 .paginacao button {
-    background-color: #3a0d16;
-    color: whitesmoke;
+    background-color: var(--bg-input);
+    color: var(--color-text);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     padding: 6px 14px;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
 
 .paginacao button:hover:not(:disabled) {
-    background-color: #ff6b81;
+    background-color: var(--color-highlight);
     color: #1a1a1a;
 }
 
@@ -275,18 +350,146 @@ h1 {
     cursor: not-allowed;
 }
 
+/* ===== RENDA / SALDO ===== */
+.dinheiro {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
 
+.renda {
+    flex: 1 1 160px;
+    background-color: var(--bg-accent);
+    box-shadow: var(--shadow-card);
+    border: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+}
+
+.renda #rendaMensal h1 {
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+}
+
+.renda #rendaMensal p {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-highlight);
+    margin: 0;
+}
+
+/* ===== BOTÃO SAIR ===== */
+.dashboard .botoes button {
+    background-color: var(--bg-card);
+    border: var(--border-subtle);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-card);
+    color: var(--color-text);
+    font-weight: 700;
+    padding: 0.5rem 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.dashboard .botoes button:hover {
+    background-color: #3a0d16;
+}
+
+/* ===== GASTOS FIXOS ===== */
+.gastosFixos {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-card-alt);
+    box-shadow: var(--shadow-card);
+    border: var(--border-subtle);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 1500px;
+    min-height: 200px;
+    margin: 2rem auto 0;
+    padding: 1.5rem;
+}
+
+.gastosFixos h1 {
+    color: var(--color-text);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.pGastosFixos {
+    color: var(--color-text);
+    margin: 0;
+    padding: 0.5rem 0;
+    border-bottom: var(--border-subtle);
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.pGastosFixos:last-of-type {
+    border-bottom: none;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+
+    .dashboard {
+        gap: 1rem;
+    }
+
+    .painel-lateral {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    #compras {
+        flex: 1 1 100%;
+    }
+
+    .filtroMes {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #mesAno,
+    #buttonMes {
+        width: 100%;
+    }
+
+    .dinheiro {
+        flex-direction: column;
+    }
+
+    .renda {
+        flex: 1 1 100%;
+    }
+
+    .gastosFixos {
+        margin-top: 1rem;
+    }
+
+    .dashboard .botoes {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+}
 </style>
 
 <script setup>
-import { onMounted, ref, computed, onBeforeMount } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router'
-import { jwtDecode } from 'jwt-decode';
 
 
 const route = useRoute()
 const idUser = route.params.id
-const decoded = ref(jwtDecode(localStorage.getItem("token")));
+const gastosFixos = ref([])
+const rendaMensal = ref()
+const mesFiltro = ref()
 
 const gastoPorCategoria = ref([])
 const categoriaCriada = ref()
@@ -305,7 +508,23 @@ function logout() {
     window.location.reload();
 }
 
+async function excluir(idGastos) {
+    const request = await fetch(`http://localhost:3000/gastos/deletarGasto?idUser=${idUser}&idGastos=${idGastos}`, {
+        method: 'DELETE'
+    })
+    if (request.ok) {
+        window.location.reload();
+    }
+}
 
+async function mesSelecionado() {
+    const request = await fetch(`http://localhost:3000/gastos/listar-gastosMes?idUser=${idUser}&mes=${mesFiltro.value}`)
+    const data = await request.json();
+    if (request.ok) {
+        compras.value = data;
+    }
+
+}
 async function criarCategoria() {
     const request = await fetch("http://localhost:3000/gastos/categoria", {
         method: 'POST',
@@ -370,6 +589,29 @@ async function registraCompra() {
         window.location.reload()
     }
 }
+
+onMounted(async () => {
+    const response = await fetch(`http://localhost:3000/user/rendaMensal?idUser=${idUser}`)
+    const data = await response.json();
+    if (response.ok) {
+        rendaMensal.value = data.rendaMensal;
+    } else {
+        console.log(data);
+    }
+
+})
+
+onMounted(async () => {
+    const response = await fetch(`http://localhost:3000/gastos/listar-gastosFixos?idUser=${idUser}`);
+    const data = await response.json();
+    if (response.ok) {
+        gastosFixos.value = data;
+    } else {
+        console.log(data)
+    }
+
+
+})  
 
 onMounted(async () => {
     const response = await fetch(`http://localhost:3000/gastos/listar-categorias?idUser=${idUser}`)
