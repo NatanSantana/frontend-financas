@@ -106,11 +106,12 @@
         </div>
 
         <div class="gastosFixos">
-            <h1>Gastos Fixos</h1>
-            <p class="pGastosFixos" v-for="gf in gastosFixos" :key="gf.id">
-                R$ {{ gf.valor }} — {{ gf.descricao }}
-                </p>
-        </div>
+    <h1>Gastos Fixos</h1>
+    <p class="pGastosFixos" v-for="gf in gastosFixos" :key="gf.id">
+        R$ {{ gf.valor }} — {{ gf.descricao }}
+        <button @click="excluirGastoFixo(gf.id)" id="excluir">X</button>
+    </p>
+</div>
 
 
     </div>
@@ -681,6 +682,21 @@ const itensPorPagina = 5;
 function logout() {
     localStorage.removeItem("token")
     window.location.reload();
+}
+
+
+async function excluirGastoFixo(id) {
+    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/deletar-gastoFixo?id=${id}&idUser=${idUser}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${storage}`
+        }
+    })
+    if (request.ok) {
+        window.location.reload();
+    } else {
+        console.log("Erro ao deletar Gasto Fixo")
+    }
 }
 
 async function registrarGastoFixo() {
