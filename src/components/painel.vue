@@ -652,10 +652,10 @@ h1 {
 <script setup>
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router'
-import { jwtDecode } from 'jwt-decode';
+
 
 const storage = localStorage.getItem('token')
-const token = jwtDecode(storage);
+
 const descricaoGastoFixo = ref()
 const valorGastoFixo = ref()
 const categoriaExcluir = ref()
@@ -690,7 +690,7 @@ async function registrarGastoFixo() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${storage}`
         },
         body: JSON.stringify({
             valor: Number(valorGastoFixo.value),
@@ -713,7 +713,7 @@ async function excluirCategoria() {
     const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/deletarCategoria?idUser=${idUser}&idCategoria=${categoriaExcluir.value}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${storage}`
         }
     })
     if (request.ok) {
@@ -730,7 +730,7 @@ async function excluir(idGastos) {
     const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/deletarGasto?idUser=${idUser}&idGastos=${idGastos}`, {
         method: 'DELETE',
         headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${storage}`
         }
     })
     if (request.ok) {
@@ -745,7 +745,7 @@ async function mesSelecionado() {
     }
     const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosMes?idUser=${idUser}&mes=${mesFiltro.value}`, {
         headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${storage}`
         }
     })
     const data = await request.json();
@@ -760,7 +760,7 @@ async function criarCategoria() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${storage}`
         },
         body: JSON.stringify({
             nome: categoriaCriada.value,
@@ -812,7 +812,7 @@ async function registraCompra() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${storage}`
         },
         body: JSON.stringify({
             valor: Number(valorCompra.value),
@@ -830,7 +830,7 @@ async function registraCompra() {
 onMounted(async () => {
     const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/user/rendaMensal?idUser=${idUser}`, {
         headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${storage}`
         }
     })
     const data = await response.json();
@@ -845,7 +845,7 @@ onMounted(async () => {
 onMounted(async () => {
     const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosFixos?idUser=${idUser}`, {
         headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${storage}`
         }
     });
     const data = await response.json();
@@ -867,7 +867,7 @@ onMounted(async () => {
 onMounted(async () => {
     const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-categorias?idUser=${idUser}`, {
         headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${storage}`
         }
     })
     if (response.ok) {
@@ -879,7 +879,7 @@ onMounted(async () => {
 onMounted(async () => {
     const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/relatorio/mensal?idUser=${idUser}`, {
         headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${storage}`
         }
     })
     if(response.ok) {
@@ -899,7 +899,7 @@ onMounted(async () => {
 onMounted(async () => {
     const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos?idUser=${idUser}`, {
         headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${storage}`
         }
     });
     if (response.ok) {
