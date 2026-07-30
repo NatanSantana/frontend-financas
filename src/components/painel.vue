@@ -652,8 +652,10 @@ h1 {
 <script setup>
 import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router'
+import { jwtDecode } from 'jwt-decode';
 
-
+const storage = localStorage.getItem('token')
+const token = jwtDecode(storage);
 const descricaoGastoFixo = ref()
 const valorGastoFixo = ref()
 const categoriaExcluir = ref()
@@ -684,10 +686,11 @@ function logout() {
 async function registrarGastoFixo() {
     
 
-    const request = await fetch(`http://localhost:3000/gastos/fixo`, {
+    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/fixo`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
             valor: Number(valorGastoFixo.value),
@@ -707,8 +710,11 @@ async function registrarGastoFixo() {
 
 async function excluirCategoria() {
     
-    const request = await fetch(`http://localhost:3000/gastos/deletarCategoria?idUser=${idUser}&idCategoria=${categoriaExcluir.value}`, {
-        method: 'DELETE'
+    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/deletarCategoria?idUser=${idUser}&idCategoria=${categoriaExcluir.value}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
     })
     if (request.ok) {
         console.log("Categoria Deletada")
@@ -721,8 +727,11 @@ async function excluirCategoria() {
 
 async function excluir(idGastos) {
     
-    const request = await fetch(`http://localhost:3000/gastos/deletarGasto?idUser=${idUser}&idGastos=${idGastos}`, {
-        method: 'DELETE'
+    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/deletarGasto?idUser=${idUser}&idGastos=${idGastos}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
     })
     if (request.ok) {
         window.location.reload();
@@ -734,7 +743,11 @@ async function mesSelecionado() {
         alert("Preencha todas as informações para filtrar")
         return
     }
-    const request = await fetch(`http://localhost:3000/gastos/listar-gastosMes?idUser=${idUser}&mes=${mesFiltro.value}`)
+    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosMes?idUser=${idUser}&mes=${mesFiltro.value}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     const data = await request.json();
     if (request.ok) {
         compras.value = data;
@@ -743,10 +756,11 @@ async function mesSelecionado() {
 }
 async function criarCategoria() {
     
-    const request = await fetch("http://localhost:3000/gastos/categoria", {
+    const request = await fetch("https://controle-financeiro-9hd1.onrender.com/gastos/categoria", {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
             nome: categoriaCriada.value,
@@ -789,11 +803,15 @@ function formatarData(dataISO) {
 }
 
 async function registraCompra() {
+    if (categoriaSelecionada.value.length == 0 || !categoriaSelecionada.value) {
+        alert("Crie ou seleciona uma categoria")
+    }
     
     const request = await fetch("https://controle-financeiro-9hd1.onrender.com/gastos", {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
             valor: Number(valorCompra.value),
@@ -809,7 +827,11 @@ async function registraCompra() {
 }
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/user/rendaMensal?idUser=${idUser}`)
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/user/rendaMensal?idUser=${idUser}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     const data = await response.json();
     if (response.ok) {
         rendaMensal.value = data.rendaMensal;
@@ -820,7 +842,11 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosFixos?idUser=${idUser}`);
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosFixos?idUser=${idUser}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
     const data = await response.json();
     if (response.ok) {
         gastosFixos.value = data;
@@ -838,7 +864,11 @@ onMounted(async () => {
 })  
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-categorias?idUser=${idUser}`)
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-categorias?idUser=${idUser}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     if (response.ok) {
         const json = await response.json();
         categorias.value = json;
@@ -846,7 +876,11 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/relatorio/mensal?idUser=${idUser}`)
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/relatorio/mensal?idUser=${idUser}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
     if(response.ok) {
         const json = await response.json();
         
@@ -862,7 +896,11 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos?idUser=${idUser}`);
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos?idUser=${idUser}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
     if (response.ok) {
         const json = await response.json()
         console.log(json)
