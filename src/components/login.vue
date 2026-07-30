@@ -175,6 +175,13 @@ async function login(email, senha) {
 
         })
     });
+
+
+    if (request.ok) {
+        console.log("login solicitado")
+    } else {
+        console.log(await request.json())
+    }
     
 
 
