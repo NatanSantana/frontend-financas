@@ -686,7 +686,7 @@ function logout() {
 
 
 async function excluirGastoFixo(id) {
-    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/deletar-gastoFixo?id=${id}&idUser=${idUser}`, {
+    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/deletar-gastoFixo?id=${id}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${storage}`
@@ -726,7 +726,7 @@ async function registrarGastoFixo() {
 
 async function excluirCategoria() {
     
-    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/deletarCategoria?idUser=${idUser}&idCategoria=${categoriaExcluir.value}`, {
+    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/deletarCategoria?idCategoria=${categoriaExcluir.value}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${storage}`
@@ -743,7 +743,7 @@ async function excluirCategoria() {
 
 async function excluir(idGastos) {
     
-    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/deletarGasto?idUser=${idUser}&idGastos=${idGastos}`, {
+    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/deletarGasto?idGastos=${idGastos}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${storage}`
@@ -759,7 +759,7 @@ async function mesSelecionado() {
         alert("Preencha todas as informações para filtrar")
         return
     }
-    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosMes?idUser=${idUser}&mes=${mesFiltro.value}`, {
+    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosMes?mes=${mesFiltro.value}`, {
         headers: {
             'Authorization': `Bearer ${storage}`
         }
@@ -844,7 +844,7 @@ async function registraCompra() {
 }
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/user/rendaMensal?idUser=${idUser}`, {
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/user/rendaMensal?`, {
         headers: {
             'Authorization': `Bearer ${storage}`
         }
@@ -859,7 +859,7 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosFixos?idUser=${idUser}`, {
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosFixos?`, {
         headers: {
             'Authorization': `Bearer ${storage}`
         }
@@ -881,7 +881,7 @@ onMounted(async () => {
 })  
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-categorias?idUser=${idUser}`, {
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-categorias?`, {
         headers: {
             'Authorization': `Bearer ${storage}`
         }
@@ -893,7 +893,7 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/relatorio/mensal?idUser=${idUser}`, {
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/relatorio/mensal?`, {
         headers: {
             'Authorization': `Bearer ${storage}`
         }
@@ -913,7 +913,7 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos?idUser=${idUser}`, {
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos`, {
         headers: {
             'Authorization': `Bearer ${storage}`
         }
