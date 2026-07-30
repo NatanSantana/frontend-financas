@@ -803,8 +803,9 @@ function formatarData(dataISO) {
 }
 
 async function registraCompra() {
-    if (categoriaSelecionada.value.length == 0 || !categoriaSelecionada.value) {
+    if (!categoriaSelecionada.value) {
         alert("Crie ou seleciona uma categoria")
+        return
     }
     
     const request = await fetch("https://controle-financeiro-9hd1.onrender.com/gastos", {
