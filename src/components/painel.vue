@@ -867,10 +867,7 @@ onMounted(async () => {
     const data = await response.json();
     if (response.ok) {
         gastosFixos.value = data;
-        for (let i of data) {
-            valor.value += Number(i.valor)
-            console.log(i.valor)
-        }
+        
 
 
     } else {
