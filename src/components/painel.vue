@@ -3,7 +3,7 @@
         <div class="painel-lateral">
             <div id="container-mensal">
                 <h1>Gasto Mensal</h1>
-                <h2>R$ {{ valor }}</h2>
+                <h2>R$ {{ parseFloat(valor).toFixed(2) }}</h2>
                 <h1>Gasto Por Categoria:</h1>
                 
                 <p v-for="cg in gastoPorCategoria" :key="cg.categoria"> <span style="color: whitesmoke; font-weight: bold;" >{{ cg.categoria }}</span> - R${{ cg.total }}</p>
@@ -82,7 +82,7 @@
                 <div class="renda">
                     <div id="rendaMensal"> 
                         <h1>Saldo</h1>
-                        <p> R$ {{ rendaMensal - valor - totalValorGastoFixo}}</p>
+                        <p> R$ {{ parseFloat(rendaMensal - valor - totalValorGastoFixo).toFixed(2)}}</p>
                     </div>
 
                 
@@ -129,7 +129,7 @@
         </div>
 
         <div class="gastosFixos">
-    <h1>Gastos Fixos</h1>
+    <h1>Gastos Fixos -  <span style="color: #ff6b81; "> R$ {{  parseFloat(totalValorGastoFixo).toFixed(2) }}</span></h1>
     <p class="pGastosFixos" v-for="gf in gastosFixos" :key="gf.id">
         R$ {{ gf.valor }} — {{ gf.descricao }}
         <button @click="excluirGastoFixo(gf.id)" id="excluir">X</button>
@@ -737,7 +737,7 @@ const idUser = route.params.id
 const gastosFixos = ref([])
 const rendaMensal = ref()
 const mesFiltro = ref()
-const totalValorGastoFixo = gastosFixos.value.map(i => totalValorGastoFixo += i.valor)
+let totalValorGastoFixo = ref(0)
 
 const gastoPorCategoria = ref([])
 const categoriaCriada = ref()
@@ -993,9 +993,10 @@ onMounted(async () => {
     if (response.ok) {
         gastosFixos.value = data;
         for (let i of data) {
-            totalValorGastoFixo.value += i.valor
-            console.log(i.valor)
+            totalValorGastoFixo.value += Number(i.valor)
+            console.log(Number(i.valor))
         }
+        console.log(data)
         console.log("Total gasto fixo: " + totalValorGastoFixo.value)
 
 
