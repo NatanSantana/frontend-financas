@@ -82,7 +82,7 @@
                 <div class="renda">
                     <div id="rendaMensal"> 
                         <h1>Saldo</h1>
-                        <p> R$ {{ rendaMensal - valor }}</p>
+                        <p> R$ {{ rendaMensal - valor - totalValorGastoFixo}}</p>
                     </div>
 
                 
@@ -737,6 +737,7 @@ const idUser = route.params.id
 const gastosFixos = ref([])
 const rendaMensal = ref()
 const mesFiltro = ref()
+const totalValorGastoFixo = gastosFixos.value.map(i => totalValorGastoFixo += i.valor)
 
 const gastoPorCategoria = ref([])
 const categoriaCriada = ref()
@@ -983,7 +984,7 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosFixos?`, {
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosFixos`, {
         headers: {
             'Authorization': `Bearer ${storage}`
         }
@@ -992,9 +993,10 @@ onMounted(async () => {
     if (response.ok) {
         gastosFixos.value = data;
         for (let i of data) {
-            valor.value += Number(i.valor)
+            totalValorGastoFixo.value += i.valor
             console.log(i.valor)
         }
+        console.log("Total gasto fixo: " + totalValorGastoFixo.value)
 
 
     } else {
