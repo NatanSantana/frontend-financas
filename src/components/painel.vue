@@ -3,13 +3,13 @@
         <div class="painel-lateral">
             <div id="container-mensal">
                 <h1>Gasto Mensal</h1>
-                <h2>R$ {{ valor }}</h2>
+                <h2>R$ {{ parseFloat(valor).toFixed(2) }}</h2>
                 <h1>Gasto Por Categoria:</h1>
                 
                 <p v-for="cg in gastoPorCategoria" :key="cg.categoria"> <span style="color: whitesmoke; font-weight: bold;" >{{ cg.categoria }}</span> - R${{ cg.total }}</p>
             </div>
 
-            <div class="addCompra">
+        <div class="addCompra">
                 <h1>Adicione compras</h1>
                 <div id="formsCompra">
                     <input v-model="descricao" type="text" placeholder="Descrição" id="inputDescricao">
@@ -21,7 +21,11 @@
                         </option>
                     </select>
                     <button @click="registraCompra">Confirmar</button>
+
+                    
                 </div>
+                
+                
 
             <div class="criarCategorias">
                 <h1>Crie uma Categoria</h1>
@@ -32,7 +36,17 @@
                 </div>
             </div>
 
-            </div>
+            <div class="economia">
+                    <h1>Guardar</h1>
+                    <div id="formsEconomia">
+                        <input v-model="dinheiroEconomia" type="number" placeholder="valor">
+                        <button @click="guardarDinheiro">Guardar</button>
+                        <button @click="diminuirDinheiro">Retirar</button>
+                    </div>
+                      
+                </div>
+
+        </div>
 
 
         </div>
@@ -68,11 +82,20 @@
                 <div class="renda">
                     <div id="rendaMensal"> 
                         <h1>Saldo</h1>
-                        <p> R$ {{ rendaMensal - valor }}</p>
+                        <p> R$ {{ parseFloat(rendaMensal - valor - totalValorGastoFixo).toFixed(2)}}</p>
                     </div>
+
+                
                 
 
                 </div>
+                <div class="renda">
+                    <div id="rendaMensal">
+                        <h1>Economia</h1>
+                        <p>R$ {{ totalEconomia }}</p>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -106,7 +129,7 @@
         </div>
 
         <div class="gastosFixos">
-    <h1>Gastos Fixos</h1>
+    <h1>Gastos Fixos -  <span style="color: #ff6b81; "> R$ {{  parseFloat(totalValorGastoFixo).toFixed(2) }}</span></h1>
     <p class="pGastosFixos" v-for="gf in gastosFixos" :key="gf.id">
         R$ {{ gf.valor }} — {{ gf.descricao }}
         <button @click="excluirGastoFixo(gf.id)" id="excluir">X</button>
@@ -120,6 +143,52 @@
 </template>
 
 <style>
+
+
+
+#formsEconomia button {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: row;
+    width: 20vh;
+    margin-left: 0.7rem;
+    padding-top: 0.8rem;
+    padding-left: 4rem;
+    font-size: 15px;
+}
+
+#formsEconomia input {
+    padding-top: 5rem;
+    height: 42px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: var(--bg-input);
+    color: var(--color-text);
+    padding: 0 12px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+    width: 100%;
+
+}
+
+.economia h1 {
+    margin-left: 3.6rem;
+    margin-top: -0.5rem;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.economia {
+    padding: 1.7rem;
+    background-color: var(--bg-accent);
+    border: var(--border-subtle);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    color: var(--color-text);
+    margin-top: 1rem;
+}
 
 :root {
     --bg-card: #2a0a12;
@@ -657,6 +726,8 @@ import { useRoute } from 'vue-router'
 
 const storage = localStorage.getItem('token')
 
+const dinheiroEconomia = ref()
+
 const descricaoGastoFixo = ref()
 const valorGastoFixo = ref()
 const categoriaExcluir = ref()
@@ -666,6 +737,7 @@ const idUser = route.params.id
 const gastosFixos = ref([])
 const rendaMensal = ref()
 const mesFiltro = ref()
+let totalValorGastoFixo = ref(0)
 
 const gastoPorCategoria = ref([])
 const categoriaCriada = ref()
@@ -679,11 +751,64 @@ const compras = ref([])
 const paginaAtual = ref(1);
 const itensPorPagina = 5;
 
+const totalEconomia = ref()
+
 function logout() {
     localStorage.removeItem("token")
     window.location.reload();
 }
 
+onMounted(async () => {
+    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/economias/total`, {
+        headers: {
+            'Authorization': `Bearer ${storage}`
+        }
+    });
+    const data = await request.json()
+    if (request.ok) {
+        totalEconomia.value = data.valor
+    } else {
+        console.log(data)
+    }
+})
+
+
+async function guardarDinheiro() {
+    console.log(dinheiroEconomia.value)
+    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/economias/guardar`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${storage}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            valor: Number(dinheiroEconomia.value),
+            idUser: Number(idUser),
+        })
+    })
+    if(request.ok) {
+        console.log(await request.json())
+        window.location.reload();
+    }else {
+        console.log(await request.json())
+    }
+
+}
+
+async function diminuirDinheiro() {
+    const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/economias/diminuir?valorDiminuir=${Number(dinheiroEconomia.value)}`, {
+        method: 'PATCH',
+        headers: {
+            'Authorization': `Bearer ${storage}`
+        }
+    })
+    if(request.ok) {
+        console.log(await request.json())
+        window.location.reload();
+    }else {
+        console.log(await request.json())
+    }
+}
 
 async function excluirGastoFixo(id) {
     const request = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/deletar-gastoFixo?id=${id}`, {
@@ -859,7 +984,7 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosFixos?`, {
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosFixos`, {
         headers: {
             'Authorization': `Bearer ${storage}`
         }
@@ -867,7 +992,12 @@ onMounted(async () => {
     const data = await response.json();
     if (response.ok) {
         gastosFixos.value = data;
-        
+        for (let i of data) {
+            totalValorGastoFixo.value += Number(i.valor)
+            console.log(Number(i.valor))
+        }
+        console.log(data)
+        console.log("Total gasto fixo: " + totalValorGastoFixo.value)
 
 
     } else {
