@@ -1040,7 +1040,7 @@ onMounted(async () => {
 })
 
 onMounted(async () => {
-    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos`, {
+    const response = await fetch(`https://controle-financeiro-9hd1.onrender.com/gastos/listar-gastosMes?mes=${new Date().toISOString().substring(0,7)}`, {
         headers: {
             'Authorization': `Bearer ${storage}`
         }
@@ -1051,6 +1051,8 @@ onMounted(async () => {
         compras.value = json;
 
     }
+
+   
 })
 
 
